@@ -14,10 +14,12 @@
 	},
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	"forwardPorts": [8080]
+	// - Forwarded port 8080 so we can call the API from outside the container
+	// - Forwarded port 5173 so we can view the frontend from outside the container i.e. http://localhost:5173/
+	"forwardPorts": [8080, 5173],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "java -version",
+	"postCreateCommand": "bash .devcontainer/scripts/setup-aliases.sh && bash -i .devcontainer/scripts/install-dependencies.sh"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
