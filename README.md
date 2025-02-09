@@ -126,3 +126,8 @@ The `main` branch is protected therefore to get any new changes into it you will
 * Once your pull request is approved then you are ready to merge `your pull request` into `main` and the commit message needs the following:
     1. Should start with the prefix `GH-ISSUE #ISSUE_NUMBER:` replace `ISSUE_NUMBER` with issue number you are working on
     2. Everything that was in the pull request description
+
+## Continuous Integration
+The project has CI setup using [GitHub Actions](https://docs.github.com/en/actions/about-github-actions/understanding-github-actions), which builds and tests on every change on `main` branch or when there is `pull request on main` branch. The CI also runs eslint on the frontend code.
+
+Project members can also trigger CI for any branch manual.
