@@ -31,6 +31,7 @@ jobs:
       with:
         node-version: 22.x
         cache: 'npm'
+        cache-dependency-path: web/package-lock.json
     - name: Test frontend
       run: cd web && npm test run
     - name: Lint frontend
