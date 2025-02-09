@@ -99,3 +99,10 @@ To run the `frontend` tests:
 cd web
 npm test
 ``` 
+
+## Project management
+This project uses [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects) to plan and track my work effectively.
+
+To see what is currently been worked on and what has been completed so far you can look at the [Project board](https://github.com/users/monozero69/projects/2/views/1).
+
+Before the deadline of **11:55 pm on Sunday 23rd February 2025** this project will have **minimum viable product (MVP)** completed. To see what is part of the MVP you can look at the [epic issue](https://github.com/monozero69/contacts-web-app/issues/8) for it.
