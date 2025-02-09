@@ -1,0 +1,26 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/java
+{
+	"name": "Java & Node",
+	"image": "mcr.microsoft.com/devcontainers/java:1-21-bullseye",
+
+	"features": {
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "none",
+			"installMaven": "true",
+			"installGradle": "false"
+		},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// - Forwarded port 8080 so we can call the API from outside the container
+	// - Forwarded port 5173 so we can view the frontend from outside the container i.e. http://localhost:5173/
+	"forwardPorts": [8080, 5173],
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	"postCreateCommand": "bash .devcontainer/scripts/setup-aliases.sh && bash -i .devcontainer/scripts/install-dependencies.sh"
+
+	// Configure tool-specific properties.
+	// "customizations": {},
+}
