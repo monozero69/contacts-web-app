@@ -121,8 +121,8 @@ The `main` branch is protected therefore to get any new changes into it you will
 * All of your commits on the feature branch should start with the prefix `GH-ISSUE #ISSUE_NUMBER:` replace `ISSUE_NUMBER` with issue number you are working on.
 * Once you ready to merge your changes from the `feature branch` into `main branch` you will need to create a new pull request on GitHub.
 * The pull request description needs the following:
-1. A [keyword](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword) that will link the pull request to the issue you are working on.
-2. Explain what changes have been done and why you've done them.
+    1. A [keyword](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword) that will link the pull request to the issue you are working on.
+    2. Explain what changes have been done and why you've done them.
 * Once your pull request is approved then you are ready to merge `your pull request` into `main` and the commit message needs the following:
-1. Should start with the prefix `GH-ISSUE #ISSUE_NUMBER:` replace `ISSUE_NUMBER` with issue number you are working on
-2. Everything that was in the pull request description
+    1. Should start with the prefix `GH-ISSUE #ISSUE_NUMBER:` replace `ISSUE_NUMBER` with issue number you are working on
+    2. Everything that was in the pull request description
