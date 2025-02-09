@@ -100,9 +100,29 @@ cd web
 npm test
 ``` 
 
+### Lint the frontend layer
+```
+cd web
+npm run lint
+```
+
 ## Project management
 This project uses [GitHub Projects](https://docs.github.com/en/issues/planning-and-tracking-with-projects/learning-about-projects/about-projects) to plan and track my work effectively.
 
 To see what is currently been worked on and what has been completed so far you can look at the [Project board](https://github.com/users/monozero69/projects/2/views/1).
 
 Before the deadline of **11:55 pm on Sunday 23rd February 2025** this project will have **minimum viable product (MVP)** completed. To see what is part of the MVP you can look at the [epic issue](https://github.com/monozero69/contacts-web-app/issues/8) for it.
+
+The `main` branch is protected therefore to get any new changes into it you will have follow the following workflow:
+* Create a new GitHub issue if there is not already an existing issue on our [backlog](https://github.com/monozero69/contacts-web-app/issues).
+* The new issue will go under review & refinement and once that is done it will be put into `Ready` column on our [Project board](https://github.com/users/monozero69/projects/2/views/1)
+* An issue in the `Ready` column on our project board can be picked up for development by assigning it to yourself and moving it to `In progress` column on the board.
+* Create a `new feature branch` from `main` branch. The feature branch should have the prefix `gh-ISSUE_NUMBER` in its name, replace `ISSUE_NUMBER` with issue number you creating the feature branch for.
+* All of your commits on the feature branch should start with the prefix `GH-ISSUE #ISSUE_NUMBER:` replace `ISSUE_NUMBER` with issue number you are working on.
+* Once you ready to merge your changes from the `feature branch` into `main branch` you will need to create a new pull request on GitHub.
+* The pull request description needs the following:
+1. A [keyword](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword) that will link the pull request to the issue you are working on.
+2. Explain what changes have been done and why you've done them.
+* Once your pull request is approved then you are ready to merge `your pull request` into `main` and the commit message needs the following:
+1. Should start with the prefix `GH-ISSUE #ISSUE_NUMBER:` replace `ISSUE_NUMBER` with issue number you are working on
+2. Everything that was in the pull request description
