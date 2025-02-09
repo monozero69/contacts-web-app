@@ -35,8 +35,8 @@ jobs:
     - name: Install frontend dependencies
       run: cd web && npm ci
     - name: Test frontend
-      run: npm test run
+      run: cd web && npm test run
     - name: Lint frontend
-      run: npm run lint
+      run: cd web && npm run lint
     - name: Build Frontend
-      run: npm run build
+      run: cd web && npm run build
