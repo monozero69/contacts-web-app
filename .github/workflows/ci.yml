@@ -32,8 +32,10 @@ jobs:
         node-version: 22.x
         cache: 'npm'
         cache-dependency-path: web/package-lock.json
+    - name: Install frontend dependencies
+      run: cd web && npm ci
     - name: Test frontend
-      run: cd web && npm test run
+      run: npm test run
     - name: Lint frontend
       run: npm run lint
     - name: Build Frontend
