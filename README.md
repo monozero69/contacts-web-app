@@ -1,3 +1,5 @@
+[![CI for API & frontend](https://github.com/monozero69/contacts-web-app/actions/workflows/ci.yml/badge.svg)](https://github.com/monozero69/contacts-web-app/actions/workflows/ci.yml)
+
 # Contacts Web App
 A simple contacts web application that stores information such as name, address, and telephone numbers for contacts. 
 
