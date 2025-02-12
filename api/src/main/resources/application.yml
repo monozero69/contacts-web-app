@@ -1,3 +1,5 @@
 spring:
   application:
     name: @project.name@
+  profiles:
+    default: dev

@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: dev-@project.name@
+  h2:
+    console:
+      enabled: true
