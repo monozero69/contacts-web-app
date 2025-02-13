@@ -1,0 +1,28 @@
+= Getting started with Contact REST API
+:toc:
+
+== Introduction
+All the example in this document use the Contact REST API running at
+http://localhost:8080
+
+== Add new Contact
+When adding new contact the following request fields can be passed:
+
+.Add new contact request fields
+include::{snippets}/add_contact/request-fields.adoc[]
+
+And the following response fields are returned when you have successful created new contact:
+
+.Add new contact response fields
+include::{snippets}/add_contact/response-fields.adoc[]
+
+=== Example curl request
+
+.Curl request
+include::{snippets}/add_contact/curl-request.adoc[]
+
+.HTTP request
+include::{snippets}/add_contact/http-request.adoc[]
+
+.HTTP response
+include::{snippets}/add_contact/http-response.adoc[]

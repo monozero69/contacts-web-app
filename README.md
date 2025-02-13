@@ -133,3 +133,6 @@ The `main` branch is protected therefore to get any new changes into it you will
 The project has CI setup using [GitHub Actions](https://docs.github.com/en/actions/about-github-actions/understanding-github-actions), which builds and tests on every change on `main` branch or when there is `pull request on main` branch. The CI also runs eslint on the frontend code.
 
 Project members can also trigger CI for any branch manual.
+
+## API specification documentation
+To get **latest** documentation on the Contact API you can access it in the running API service on the following location http://localhost:8080/docs/index.html

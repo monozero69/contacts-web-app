@@ -3,8 +3,10 @@ package com.monozero69.contacts.api.web;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -19,8 +21,16 @@ import static org.hamcrest.CoreMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.Arrays;
+
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;;
+
 @WebMvcTest(controllers = ContactController.class)
 @ActiveProfiles("test")
+@AutoConfigureRestDocs
 @DisplayName("the contact controller")
 public class ContactControllerTest {
 
@@ -35,6 +45,26 @@ public class ContactControllerTest {
     
     @Autowired
     private ContactController contactController;
+
+    private static FieldDescriptor[] contact = {
+                                            fieldWithPath("id").description("Unique indentifier for contact"),
+                                            fieldWithPath("firstname").description("First name for contact"),
+                                            fieldWithPath("lastname").description("Last name for contact"),
+                                            fieldWithPath("phonenumber").description("Phone number for contact"),
+                                            fieldWithPath("email").description("Email address for contact"),
+                                            fieldWithPath("firstLineOfAddress").description("First line of address for contact"),
+                                            fieldWithPath("secondLineOfAddress").description("Second line of address for contact"),
+                                            fieldWithPath("thirdLineOfAddress").description("Third line of address for contact"),
+                                            fieldWithPath("city").description("City or town for contact"),
+                                            fieldWithPath("county").description("UK county for contact"),
+                                            fieldWithPath("postcode").description("UK postcode for contact"),
+                                            fieldWithPath("country").description("UK country for contact")};
+
+    private static FieldDescriptor[] addContactRequest = Arrays.copyOf(contact, contact.length);
+
+    {
+        addContactRequest[0] = fieldWithPath("id").description("Unique indentifier needs to be null when adding a new contact");
+    }
 
     @Test
     @DisplayName("should exists")
@@ -100,7 +130,8 @@ public class ContactControllerTest {
             .andExpect(jsonPath("$.city", is(equalTo(newContact.getCity()))))
             .andExpect(jsonPath("$.county", is(equalTo(newContact.getCounty()))))
             .andExpect(jsonPath("$.postcode", is(equalTo(newContact.getPostcode()))))
-            .andExpect(jsonPath("$.country", is(equalTo(newContact.getCountry()))));
+            .andExpect(jsonPath("$.country", is(equalTo(newContact.getCountry()))))
+            .andDo(document("add_contact", requestFields(addContactRequest), responseFields(contact)));
     }
 
 
