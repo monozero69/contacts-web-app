@@ -1,0 +1,1 @@
+export const REST_API_ENDPOINT = 'http://localhost:8080/api/contacts';

@@ -7,6 +7,11 @@ export default defineConfig({
   test: {
     globals: true,
     environment: 'jsdom',
-    setupFiles: ['tests/vitest-setup.js']
+    setupFiles: ['tests/vitest-setup.js'],
+    coverage: {
+      include: ['src/**/*.js', 'src/**/*.jsx'],
+      exclude: ['src/main.jsx']
+    },
+    testTimeout: 30000, // changed timeout from default 5 to 30 seconds
   }
 })

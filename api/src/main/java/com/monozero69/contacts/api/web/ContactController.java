@@ -9,6 +9,7 @@ import com.monozero69.contacts.api.model.Contact;
 import com.monozero69.contacts.api.repository.ContactRepository;
 
 @RestController
+@CrossOrigin( origins = {"http://localhost:5173"} )
 @RequestMapping("/api/contacts")
 public class ContactController {
 
