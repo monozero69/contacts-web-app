@@ -133,3 +133,23 @@ The `main` branch is protected therefore to get any new changes into it you will
 The project has CI setup using [GitHub Actions](https://docs.github.com/en/actions/about-github-actions/understanding-github-actions), which builds and tests on every change on `main` branch or when there is `pull request on main` branch. The CI also runs eslint on the frontend code.
 
 Project members can also trigger CI for any branch manual.
+
+## API specification documentation
+To get **latest** documentation on the Contact API you can access it in the running API service on the following location http://localhost:8080/docs/index.html
+
+## User Guide
+
+### Add a new contact
+When you first load the application you will have zero contacts saved and a message will be displayed telling you that.
+
+<img src="./doc/images/no_saved_contacts.png" width="75%" hight="75%" />
+
+Click on the **`Add Contact`** button to load a form for new contact. 
+
+<img src="./doc/images/add_new_contact.png" width="75%" hight="75%" />
+
+Once you have entered the contacts details you can click **`Save`** button.
+
+Once the new contact is successfully saved you should see a message telling you that.
+
+<img src="./doc/images/saved_new_contact.png" width="75%" hight="75%" />

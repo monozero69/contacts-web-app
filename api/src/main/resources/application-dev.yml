@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: dev-@project.name@
+  h2:
+    console:
+      enabled: true
+  datasource:
+    url: jdbc:h2:file:./data/contacts;AUTO_RECONNECT=TRUE
+  jpa:
+    hibernate:
+      ddl-auto: update
