@@ -140,7 +140,7 @@ To get **latest** documentation on the Contact API you can access it in the runn
 ## User Guide
 
 ### Add a new contact
-When you first load the application you will have zero contacts saved and a message will be displayed tell you that.
+When you first load the application you will have zero contacts saved and a message will be displayed telling you that.
 
 <img src="./doc/images/no_saved_contacts.png" width="75%" hight="75%" />
 
@@ -150,6 +150,6 @@ Click on the **`Add Contact`** button to load a form for new contact.
 
 Once you have entered the contacts details you can click **`Save`** button.
 
-Once the new contact is successfully saved you should see a message tell you that.
+Once the new contact is successfully saved you should see a message telling you that.
 
 <img src="./doc/images/saved_new_contact.png" width="75%" hight="75%" />
