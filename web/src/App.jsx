@@ -2,19 +2,29 @@ import './App.css';
 import Header from './components/Header';
 import Contacts from './components/Contacts';
 import Footer from './components/Footer';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ContactForm from './components/ContactForm';
 import SaveResultAlert from './components/SaveResultAlert';
+import ContactServive from './services/ContactServive';
 
 function App() {
     
     const [showAddContactForm, setShowAddContactForm] = useState(false);
     const [saveResultAlert, setSaveResultAlert] = useState({show: false});
     const [contacts, setContacts] = useState([]);
+    const [loadingSavedContacts, setLoadingSavedContacts] = useState(true);
+
+    useEffect(() => {
+        (async () => {
+            const loadedContacts = await ContactServive.getAllContacts();
+            setContacts(loadedContacts);
+            setLoadingSavedContacts(false);
+        })();
+    }, []); // run once on App page loading
 
     return (
         <>
-            <Header handleAddContact={() => setShowAddContactForm(true)}/>
+            <Header handleAddContact={() => setShowAddContactForm(true)} loadingSavedContacts={loadingSavedContacts} />
             
             <SaveResultAlert onClose={() => setSaveResultAlert({show: false})} {...saveResultAlert}/>
 
@@ -32,7 +42,7 @@ function App() {
                 }}
             />
 
-            <Contacts contacts={contacts} />
+            <Contacts contacts={contacts} loadingSavedContacts={loadingSavedContacts} />
             
             <Footer />            
         </>

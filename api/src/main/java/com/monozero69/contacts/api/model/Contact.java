@@ -35,6 +35,10 @@ public class Contact {
     
     private String country;
     
+    public Contact() {
+        super();
+    }
+    
     public Contact(String firstname, String lastname, String phonenumber, String email, String firstLineOfAddress,
             String secondLineOfAddress, String thirdLineOfAddress, String city, String county, String postcode,
             String country) {

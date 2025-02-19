@@ -22,6 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
@@ -46,7 +47,7 @@ public class ContactControllerTest {
     @Autowired
     private ContactController contactController;
 
-    private static FieldDescriptor[] contact = {
+    private static FieldDescriptor[] contactFields = {
                                             fieldWithPath("id").description("Unique indentifier for contact"),
                                             fieldWithPath("firstname").description("First name for contact"),
                                             fieldWithPath("lastname").description("Last name for contact"),
@@ -60,7 +61,7 @@ public class ContactControllerTest {
                                             fieldWithPath("postcode").description("UK postcode for contact"),
                                             fieldWithPath("country").description("UK country for contact")};
 
-    private static FieldDescriptor[] addContactRequest = Arrays.copyOf(contact, contact.length);
+    private static FieldDescriptor[] addContactRequest = Arrays.copyOf(contactFields, contactFields.length);
 
     {
         addContactRequest[0] = fieldWithPath("id").description("Unique indentifier needs to be null when adding a new contact");
@@ -73,7 +74,7 @@ public class ContactControllerTest {
     }
 
     @Test
-    @DisplayName("shouldCreateNewContact")
+    @DisplayName("should create new contact")
     void shouldCreateNewContact() throws Exception {
         var newContact = new Contact(
                                 "Jack", 
@@ -131,8 +132,40 @@ public class ContactControllerTest {
             .andExpect(jsonPath("$.county", is(equalTo(newContact.getCounty()))))
             .andExpect(jsonPath("$.postcode", is(equalTo(newContact.getPostcode()))))
             .andExpect(jsonPath("$.country", is(equalTo(newContact.getCountry()))))
-            .andDo(document("add_contact", requestFields(addContactRequest), responseFields(contact)));
+            .andDo(document("add_contact", requestFields(addContactRequest), responseFields(contactFields)));
     }
 
+    @Test
+    @DisplayName("should return all saved contacts")
+    void shouldReturnAllSavedContacts() throws Exception {
+        final var rubyMaycontact = new Contact(
+                            "Ruby", "May", "01274669922", "ruby.may@test.com",
+                            "23 Bishop Gates", "Long Drive", "", 
+                            "Bradford", "West Yorkshire", "BD9 3WE", "England"
+                    );
+        rubyMaycontact.setId(200L);
+        when(contactRepository.findAll()).thenAnswer(invocationOnMock -> {            
+            return List.of(rubyMaycontact);
+        });
 
+        var response = mockMvc.perform(
+                                get("/api/contacts")
+                                    .contentType(MediaType.APPLICATION_JSON)
+                        );
+        
+        response
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$[0].id", is(equalTo(200))))
+            .andExpect(jsonPath("$[0].firstname", is(equalTo(rubyMaycontact.getFirstname()))))
+            .andExpect(jsonPath("$[0].lastname", is(equalTo(rubyMaycontact.getLastname()))))
+            .andExpect(jsonPath("$[0].phonenumber", is(equalTo(rubyMaycontact.getPhonenumber()))))
+            .andExpect(jsonPath("$[0].email", is(equalTo(rubyMaycontact.getEmail()))))
+            .andDo(document("get_all_saved_contacts", responseFields(
+                                                                                    fieldWithPath("[]")
+                                                                                        .description("An array of contacts")
+                                                                                )
+                                                                                .andWithPrefix("[].", contactFields)
+                            )
+                    );
+    }
 }

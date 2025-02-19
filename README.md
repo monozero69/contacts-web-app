@@ -153,3 +153,19 @@ Once you have entered the contacts details you can click **`Save`** button.
 Once the new contact is successfully saved you should see a message telling you that.
 
 <img src="./doc/images/saved_new_contact.png" width="75%" hight="75%" />
+
+### Viewing all saved contacts
+All saved contacts are shown on the main page. This gets refreshed every time you:
+- start the app
+- create new contact
+- update existing contact
+- delete a contact
+
+<img src="./doc/images/view_all_saved_contacts.png" width="75%" hight="75%" />
+
+Each contact has dropdown **`actions`** menu with the following actions available:
+- More info (shows more detailed view of contact i.e. Address details)
+- Edit (allows you update existing contact)
+- Remove (deletes the contact permanently)
+
+<img src="./doc/images/contact_actions_dropdown_menu.png" width="75%" hight="75%" />
