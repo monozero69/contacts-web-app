@@ -1,6 +1,7 @@
 package com.monozero69.contacts.api.web;
 
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +27,11 @@ public class ContactController {
         return ResponseEntity
                     .created(URI.create("/api/contacts/%s".formatted(savedContact.getId())))
                     .body(savedContact);
+    }
+
+    @GetMapping
+    public List<Contact> getAllContacts() {
+        return contactRepository.findAll();
     }
 
 }

@@ -17,6 +17,22 @@ const addContact = async (newContact) => {
     return savedContact;
 };
 
+const getAllContacts = async () => {
+    const response = await fetch(REST_API_ENDPOINT, {
+        method:'GET', // GET is default for fetch, but making it explict
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    if(response.status === 200) {
+        return await response.json();
+    }
+
+    return [];
+};
+
 export default {
-    addContact
+    addContact,
+    getAllContacts,
 };

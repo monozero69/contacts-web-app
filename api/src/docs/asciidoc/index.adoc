@@ -26,3 +26,19 @@ include::{snippets}/add_contact/http-request.adoc[]
 
 .HTTP response
 include::{snippets}/add_contact/http-response.adoc[]
+
+== Retrieving all saved Contacts
+
+.Retrieving all saved Contacts response fields
+include::{snippets}/get_all_saved_contacts/response-fields.adoc[]
+
+=== Example curl request
+
+.Curl request
+include::{snippets}/get_all_saved_contacts/curl-request.adoc[]
+
+.HTTP request
+include::{snippets}/get_all_saved_contacts/http-request.adoc[]
+
+.HTTP response
+include::{snippets}/get_all_saved_contacts/http-response.adoc[]

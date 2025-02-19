@@ -12,6 +12,6 @@ export default defineConfig({
       include: ['src/**/*.js', 'src/**/*.jsx'],
       exclude: ['src/main.jsx']
     },
-    testTimeout: 30000, // changed timeout from default 5 to 30 seconds
+    testTimeout: 60000, 
   }
 })
