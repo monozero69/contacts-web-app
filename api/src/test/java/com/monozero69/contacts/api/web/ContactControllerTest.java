@@ -16,6 +16,7 @@ import com.monozero69.contacts.api.model.Contact;
 import com.monozero69.contacts.api.repository.ContactRepository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.hamcrest.CoreMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -27,7 +28,10 @@ import java.util.List;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static com.monozero69.contacts.api.web.ContactController.CONTACT_REST_API_ENDPOINT;
 
 @WebMvcTest(controllers = ContactController.class)
 @ActiveProfiles("test")
@@ -76,50 +80,18 @@ public class ContactControllerTest {
     @Test
     @DisplayName("should create new contact")
     void shouldCreateNewContact() throws Exception {
-        var newContact = new Contact(
-                                "Jack", 
-                                "Cody", 
-                                "01234567890", 
-                                "fake@test.com",
-                                "first line of address",
-                                "second line of adddress",
-                                "third line of address",
-                                "Test City",
-                                "Test County",
-                                "LS1 3WE",
-                                "England"
-                            );
-        when(contactRepository.save(newContact)).thenAnswer(invocationOnMock ->{
-                    Contact contact = invocationOnMock.getArgument(0);
-
-                    var savedContact = new Contact(
-                        contact.getFirstname(),
-                        contact.getLastname(),
-                        contact.getPhonenumber(),
-                        contact.getEmail(),
-                        contact.getFirstLineOfAddress(),
-                        contact.getSecondLineOfAddress(),
-                        contact.getThirdLineOfAddress(),
-                        contact.getCity(),
-                        contact.getCounty(),
-                        contact.getPostcode(),
-                        contact.getCountry()
-                    );
-
-                    savedContact.setId(200L);
-
-                    return savedContact;
-        });
+        var newContact = createContact(null);
+        mockSavingNewContact(200L, newContact);
 
         var response = mockMvc.perform(
-                                post("/api/contacts")
+                                post(CONTACT_REST_API_ENDPOINT)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content(objectMapper.writeValueAsString(newContact))
                         );
         
         response
             .andExpect(status().isCreated())
-            .andExpect(header().string("Location", is(equalTo("/api/contacts/200"))))
+            .andExpect(header().string("Location", is(equalTo("%s/200".formatted(CONTACT_REST_API_ENDPOINT)))))
             .andExpect(jsonPath("$.id", is(equalTo(200))))
             .andExpect(jsonPath("$.firstname", is(equalTo(newContact.getFirstname()))))
             .andExpect(jsonPath("$.lastname", is(equalTo(newContact.getLastname()))))
@@ -138,28 +110,23 @@ public class ContactControllerTest {
     @Test
     @DisplayName("should return all saved contacts")
     void shouldReturnAllSavedContacts() throws Exception {
-        final var rubyMaycontact = new Contact(
-                            "Ruby", "May", "01274669922", "ruby.may@test.com",
-                            "23 Bishop Gates", "Long Drive", "", 
-                            "Bradford", "West Yorkshire", "BD9 3WE", "England"
-                    );
-        rubyMaycontact.setId(200L);
+        final var rubyMayContact = createContact(200L);
         when(contactRepository.findAll()).thenAnswer(invocationOnMock -> {            
-            return List.of(rubyMaycontact);
+            return List.of(rubyMayContact);
         });
 
         var response = mockMvc.perform(
-                                get("/api/contacts")
+                                get(CONTACT_REST_API_ENDPOINT)
                                     .contentType(MediaType.APPLICATION_JSON)
                         );
         
         response
             .andExpect(status().isOk())
             .andExpect(jsonPath("$[0].id", is(equalTo(200))))
-            .andExpect(jsonPath("$[0].firstname", is(equalTo(rubyMaycontact.getFirstname()))))
-            .andExpect(jsonPath("$[0].lastname", is(equalTo(rubyMaycontact.getLastname()))))
-            .andExpect(jsonPath("$[0].phonenumber", is(equalTo(rubyMaycontact.getPhonenumber()))))
-            .andExpect(jsonPath("$[0].email", is(equalTo(rubyMaycontact.getEmail()))))
+            .andExpect(jsonPath("$[0].firstname", is(equalTo(rubyMayContact.getFirstname()))))
+            .andExpect(jsonPath("$[0].lastname", is(equalTo(rubyMayContact.getLastname()))))
+            .andExpect(jsonPath("$[0].phonenumber", is(equalTo(rubyMayContact.getPhonenumber()))))
+            .andExpect(jsonPath("$[0].email", is(equalTo(rubyMayContact.getEmail()))))
             .andDo(document("get_all_saved_contacts", responseFields(
                                                                                     fieldWithPath("[]")
                                                                                         .description("An array of contacts")
@@ -167,5 +134,88 @@ public class ContactControllerTest {
                                                                                 .andWithPrefix("[].", contactFields)
                             )
                     );
+    }
+
+    @Test
+    @DisplayName("should delete given id contact")
+    void shouldDeleteAnExistingContact() throws Exception {
+        var response = mockMvc.perform(
+                            delete("%s/{id}".formatted(CONTACT_REST_API_ENDPOINT), 333L)
+                                .contentType(MediaType.APPLICATION_JSON)
+                        );
+        
+        response
+            .andExpect(status().isOk())
+            .andDo(document("delete_contact", pathParameters(
+                            parameterWithName("id").description("Unique indentifier for the contact you want to delete")
+            )));
+
+        verify(contactRepository).deleteById(333L);
+    }
+
+    @Test
+    @DisplayName("should update contact")
+    void shouldUpdateContact() throws Exception {
+        var existingContact = createContact(200L);
+        when(contactRepository.save(existingContact)).thenReturn(existingContact);
+        
+        var response = mockMvc.perform(
+                                put(CONTACT_REST_API_ENDPOINT)
+                                    .contentType(MediaType.APPLICATION_JSON)
+                                    .content(objectMapper.writeValueAsString(existingContact))
+                        );
+        
+        response
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id", is(equalTo(200))))
+            .andExpect(jsonPath("$.firstname", is(equalTo(existingContact.getFirstname()))))
+            .andExpect(jsonPath("$.lastname", is(equalTo(existingContact.getLastname()))))
+            .andExpect(jsonPath("$.phonenumber", is(equalTo(existingContact.getPhonenumber()))))
+            .andExpect(jsonPath("$.email", is(equalTo(existingContact.getEmail()))))
+            .andExpect(jsonPath("$.firstLineOfAddress", is(equalTo(existingContact.getFirstLineOfAddress()))))
+            .andExpect(jsonPath("$.secondLineOfAddress", is(equalTo(existingContact.getSecondLineOfAddress()))))
+            .andExpect(jsonPath("$.thirdLineOfAddress", is(equalTo(existingContact.getThirdLineOfAddress()))))
+            .andExpect(jsonPath("$.city", is(equalTo(existingContact.getCity()))))
+            .andExpect(jsonPath("$.county", is(equalTo(existingContact.getCounty()))))
+            .andExpect(jsonPath("$.postcode", is(equalTo(existingContact.getPostcode()))))
+            .andExpect(jsonPath("$.country", is(equalTo(existingContact.getCountry()))))
+            .andDo(document("update_contact", requestFields(contactFields), responseFields(contactFields)));
+
+    }
+
+    private static Contact createContact(Long id) {
+        final var contact = new Contact(
+                            "Ruby", "May", "01274669922", "ruby.may@test.com",
+                            "23 Bishop Gates", "Long Drive", "third line of address", 
+                            "Bradford", "West Yorkshire", "BD9 3WE", "England"
+                    );
+
+        contact.setId(id);
+
+        return contact;       
+    }
+
+    private void mockSavingNewContact(Long newId, Contact newContact) {
+        when(contactRepository.save(newContact)).thenAnswer(invocationOnMock -> {
+            Contact contact = invocationOnMock.getArgument(0);
+
+            var savedContact = new Contact(
+                contact.getFirstname(),
+                contact.getLastname(),
+                contact.getPhonenumber(),
+                contact.getEmail(),
+                contact.getFirstLineOfAddress(),
+                contact.getSecondLineOfAddress(),
+                contact.getThirdLineOfAddress(),
+                contact.getCity(),
+                contact.getCounty(),
+                contact.getPostcode(),
+                contact.getCountry()
+            );
+
+            savedContact.setId(newId);
+
+            return savedContact;
+        });
     }
 }

@@ -1,8 +1,8 @@
-= Getting started with Contact REST API
+= Getting started with Contacts REST API
 :toc:
 
 == Introduction
-All the example in this document use the Contact REST API running at
+All the example in this document use the Contacts REST API running at
 http://localhost:8080
 
 == Add new Contact
@@ -27,6 +27,28 @@ include::{snippets}/add_contact/http-request.adoc[]
 .HTTP response
 include::{snippets}/add_contact/http-response.adoc[]
 
+== Update an existing Contact
+When updating an existing contact the following request fields can be passed:
+
+.Update an existing Contact request fields
+include::{snippets}/update_contact/request-fields.adoc[]
+
+And the following response fields are returned when you have successful updated the contact:
+
+.Update an existing Contact response fields
+include::{snippets}/update_contact/response-fields.adoc[]
+
+=== Example curl request
+
+.Curl request
+include::{snippets}/update_contact/curl-request.adoc[]
+
+.HTTP request
+include::{snippets}/update_contact/http-request.adoc[]
+
+.HTTP response
+include::{snippets}/update_contact/http-response.adoc[]
+
 == Retrieving all saved Contacts
 
 .Retrieving all saved Contacts response fields
@@ -42,3 +64,19 @@ include::{snippets}/get_all_saved_contacts/http-request.adoc[]
 
 .HTTP response
 include::{snippets}/get_all_saved_contacts/http-response.adoc[]
+
+== Delete an existing contact
+
+.Delete an existing contact path parameter
+include::{snippets}/delete_contact/path-parameters.adoc[]
+
+=== Example curl request
+
+.Curl request
+include::{snippets}/delete_contact/curl-request.adoc[]
+
+.HTTP request
+include::{snippets}/delete_contact/http-request.adoc[]
+
+.HTTP response
+include::{snippets}/delete_contact/http-response.adoc[]

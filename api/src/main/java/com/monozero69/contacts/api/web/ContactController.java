@@ -11,8 +11,10 @@ import com.monozero69.contacts.api.repository.ContactRepository;
 
 @RestController
 @CrossOrigin( origins = {"http://localhost:5173"} )
-@RequestMapping("/api/contacts")
+@RequestMapping(ContactController.CONTACT_REST_API_ENDPOINT)
 public class ContactController {
+
+    public static final String CONTACT_REST_API_ENDPOINT = "/api/contacts"; 
 
     private final ContactRepository contactRepository;
 
@@ -25,7 +27,7 @@ public class ContactController {
         var savedContact = contactRepository.save(newContact);
 
         return ResponseEntity
-                    .created(URI.create("/api/contacts/%s".formatted(savedContact.getId())))
+                    .created(URI.create("%s/%s".formatted(CONTACT_REST_API_ENDPOINT, savedContact.getId())))
                     .body(savedContact);
     }
 
@@ -34,4 +36,13 @@ public class ContactController {
         return contactRepository.findAll();
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteContact(@PathVariable Long id) {
+        contactRepository.deleteById(id);
+    }
+
+    @PutMapping
+    public Contact updateContact(@RequestBody Contact existingContact) {
+        return contactRepository.save(existingContact);
+    }
 }
