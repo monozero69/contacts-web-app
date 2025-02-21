@@ -42,7 +42,7 @@ Once the container is running and you're connected, you should see your remote c
 
 Now you have everything you need to develop, run the app and run the automated tests locally. This is the same same setup `I` have when working on this project.
 
-The technologies stack for the project are Java, Spring Boot for the API layer and JavaScript, React for the frontend.
+The technologies stack for the project are `Java, Spring Boot` for the API layer and `JavaScript, React` for the frontend.
 
 You will have following development tools installed in the container:
 * Git*
@@ -135,7 +135,9 @@ The project has CI setup using [GitHub Actions](https://docs.github.com/en/actio
 Project members can also trigger CI for any branch manual.
 
 ## API specification documentation
-To get **latest** documentation on the Contact API you can access it in the running API service on the following location http://localhost:8080/docs/index.html
+To get **latest** documentation on the Contacts API you can access it in the running API service on the following location http://localhost:8080/docs/index.html
+
+<img src="./doc/images/api_spec_docs.png" width="75%" hight="75%" />
 
 ## User Guide
 
@@ -169,3 +171,12 @@ Each contact has dropdown **`actions`** menu with the following actions availabl
 - Remove (deletes the contact permanently)
 
 <img src="./doc/images/contact_actions_dropdown_menu.png" width="75%" hight="75%" />
+
+### Removing an existing contact
+To remove an existing contact for example `Ruby May` contact details then you need to first click on the **`actions`** menu then select `Remove` from it.
+
+<img src="./doc/images/delete_contact_action_start.png" width="75%" hight="75%" />
+
+Once the contact is removed you will see a message telling you that.
+
+<img src="./doc/images/delete_contact_action_done.png" width="75%" hight="75%" />
