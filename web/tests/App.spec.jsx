@@ -3,7 +3,7 @@ import App from "../src/App";
 import { renderAndSetupUser } from "./test-helper";
 import { server } from "./mocks/server";
 import { http, HttpResponse } from "msw";
-import { REST_API_ENDPOINT } from "../src/constants";
+import { HttpStatus, REST_API_ENDPOINT } from "../src/constants";
 
 describe('App', () => {
     test('should render',  async () => {
@@ -33,7 +33,7 @@ describe('App', () => {
     });
 
     test('should show a error alert when the user can not save a new contact', async () => {
-        server.use(http.post(REST_API_ENDPOINT, () => new HttpResponse(null, { status: 500 })));
+        server.use(http.post(REST_API_ENDPOINT, () => new HttpResponse(null, { status: HttpStatus.INTERNAL_SERVER_ERROR })));
         const { user } = renderAndSetupUser(<App />);
 
         await screen.findAllByRole('button', { name: /Add Contact/i });
@@ -50,7 +50,7 @@ describe('App', () => {
     });
 
     test('should allow the user to close the save result alert', async () => {
-        server.use(http.post(REST_API_ENDPOINT, () => new HttpResponse(null, { status: 500 })));
+        server.use(http.post(REST_API_ENDPOINT, () => new HttpResponse(null, { status: HttpStatus.INTERNAL_SERVER_ERROR })));
         const { user } = renderAndSetupUser(<App />);
 
         await screen.findAllByRole('button', { name: /Add Contact/i });
@@ -114,12 +114,58 @@ describe('App', () => {
     });
 
     test('should show alert when fetching saved contacts fails', async () => {
-        server.use(http.get(REST_API_ENDPOINT, () => new HttpResponse(null, { status: 500 })));
+        server.use(http.get(REST_API_ENDPOINT, () => new HttpResponse(null, { status: HttpStatus.INTERNAL_SERVER_ERROR })));
         render(<App />);
 
         await screen.findByRole('alert');
 
         expect(screen.getByText(/No saved contacts/i)).toBeInTheDocument();
-    }); 
+    });
     
+    test('should allow the user to delete a contact', async () => {
+        const { user } = renderAndSetupUser(<App />);
+
+        await screen.findByRole('table');
+
+        const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        expect(contactActionsButtons.length).toBe(3);
+
+        await user.click(contactActionsButtons[1]);
+
+        const deleteContactAction = await screen.findByText('Remove');
+        expect(deleteContactAction).toBeVisible();
+
+        await user.click(deleteContactAction);
+
+        const alert = await screen.findByRole('alert');
+
+        expect(alert).toHaveTextContent('Deleted Ben Rashford contact details.');
+        expect(screen.queryByRole('row', {name: '201 Ben Rashford 01274335466 ben@test.com ...'})).not.toBeInTheDocument();
+        expect(screen.getAllByRole('button', {name: '...'}).length).toBe(2);
+    });
+    
+    test('should not delete a contact in the UI when the API does not respond with HTTP Status OK', async () => {
+        server.use(http.delete(REST_API_ENDPOINT.concat('/', '203'), () => new HttpResponse(null, { status: HttpStatus.INTERNAL_SERVER_ERROR })));
+        const { user } = renderAndSetupUser(<App />);
+
+        await screen.findByRole('table');
+
+        const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        expect(contactActionsButtons.length).toBe(3);
+
+        await user.click(contactActionsButtons[2]); // try to delete Kate Longhorn contact
+
+        const deleteContactAction = await screen.findByText('Remove');
+        expect(deleteContactAction).toBeVisible();
+
+        await user.click(deleteContactAction);
+
+        const alert = await screen.findByRole('alert');
+
+        expect(alert).toHaveTextContent(/Something went wrong/i);
+        expect(screen.getByRole('row', {name: '200 Jack Tam 01274224466 jack.tam@test.com ...'})).toBeInTheDocument();
+        expect(screen.getByRole('row', {name: '201 Ben Rashford 01274335466 ben@test.com ...'})).toBeInTheDocument();
+        expect(screen.getByRole('row', {name: '203 Kate Longhorn 01274664466 klonghorn@test.com ...'})).toBeInTheDocument();
+        expect(screen.getAllByRole('button', {name: '...'}).length).toBe(3);
+    });
 });

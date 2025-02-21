@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw';
-import { REST_API_ENDPOINT } from '../../src/constants';
+import { HttpStatus, REST_API_ENDPOINT } from '../../src/constants';
 
 export const handlers = [
     http.post(REST_API_ENDPOINT, async ({ request }) => {
@@ -9,7 +9,7 @@ export const handlers = [
                 id: 301,
             }, 
             { 
-                status: 201,
+                status: HttpStatus.CREATED,
             }
         );
     }),
@@ -20,8 +20,9 @@ export const handlers = [
                 {id: 203, firstname: 'Kate', lastname: 'Longhorn', phonenumber: '01274664466', email: 'klonghorn@test.com'},
             ], 
             { 
-                status: 200,
+                status: HttpStatus.OK,
             }
         );
     }),
+    http.delete(REST_API_ENDPOINT.concat('/', 201), () => new HttpResponse(null, { status: HttpStatus.OK })),
 ];

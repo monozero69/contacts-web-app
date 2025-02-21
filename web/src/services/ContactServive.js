@@ -1,4 +1,4 @@
-import { REST_API_ENDPOINT } from "../constants";
+import { REST_API_ENDPOINT, HttpStatus } from "../constants";
 
 const addContact = async (newContact) => {
     const response = await fetch(REST_API_ENDPOINT, {
@@ -10,7 +10,7 @@ const addContact = async (newContact) => {
     });
     
     let savedContact = {};
-    if(response.status === 201) {
+    if(response.status === HttpStatus.CREATED) {
         savedContact = await response.json();
     }
 
@@ -25,14 +25,26 @@ const getAllContacts = async () => {
         },
     });
 
-    if(response.status === 200) {
+    if(response.status === HttpStatus.OK) {
         return await response.json();
     }
 
     return [];
 };
 
+const removeContact = async (contactId) => {
+    const response = await fetch(REST_API_ENDPOINT.concat('/', contactId), {
+        method:'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
+
+    return response.status === HttpStatus.OK;
+};
+
 export default {
     addContact,
     getAllContacts,
+    removeContact,
 };

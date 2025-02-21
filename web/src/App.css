@@ -1,0 +1,13 @@
+.contact-action-dropdown .dropdown-toggle::after {
+    display: none;
+}
+
+.contacts-wrapper {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.contacts-content {
+    flex: 1;
+}
