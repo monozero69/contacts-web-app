@@ -121,7 +121,7 @@ The `main` branch is protected therefore to get any new changes into it you will
 * An issue in the `Ready` column on our project board can be picked up for development by assigning it to yourself and moving it to `In progress` column on the board.
 * Create a `new feature branch` from `main` branch. The feature branch should have the prefix `gh-ISSUE_NUMBER` in its name, replace `ISSUE_NUMBER` with issue number you creating the feature branch for.
 * All of your commits on the feature branch should start with the prefix `GH-ISSUE #ISSUE_NUMBER:` replace `ISSUE_NUMBER` with issue number you are working on.
-* Once you ready to merge your changes from the `feature branch` into `main branch` you will need to create a new pull request on GitHub.
+* Once you are ready to merge your changes from the `feature branch` into `main branch` you will need to create a new pull request on GitHub.
 * The pull request description needs the following:
     1. A [keyword](https://docs.github.com/en/issues/tracking-your-work-with-issues/using-issues/linking-a-pull-request-to-an-issue#linking-a-pull-request-to-an-issue-using-a-keyword) that will link the pull request to the issue you are working on.
     2. Explain what changes have been done and why you've done them.
@@ -130,12 +130,12 @@ The `main` branch is protected therefore to get any new changes into it you will
     2. Everything that was in the pull request description
 
 ## Continuous Integration
-The project has CI setup using [GitHub Actions](https://docs.github.com/en/actions/about-github-actions/understanding-github-actions), which builds and tests on every change on `main` branch or when there is `pull request on main` branch. The CI also runs eslint on the frontend code.
+The project has CI set up for it using [GitHub Actions](https://docs.github.com/en/actions/about-github-actions/understanding-github-actions), which builds and runs tests on every change on `main` branch or when there is `pull request on main` branch. The CI also runs eslint on the frontend code.
 
-Project members can also trigger CI for any branch manual.
+Project member(s) can also trigger CI for any branch manual.
 
 ## API specification documentation
-To get **latest** documentation on the Contacts API you can access it in the running API service on the following location http://localhost:8080/docs/index.html
+To get the **latest** documentation on the Contacts API you can access it in the running API service on the following location http://localhost:8080/docs/index.html
 
 <img src="./doc/images/api_spec_docs.png" width="75%" hight="75%" />
 
@@ -167,7 +167,7 @@ All saved contacts are shown on the main page. This gets refreshed every time yo
 
 Each contact has dropdown **`actions`** menu with the following actions available:
 - More info (shows more detailed view of contact i.e. Address details)
-- Edit (allows you update existing contact)
+- Edit (allows you to update existing contact)
 - Remove (deletes the contact permanently)
 
 <img src="./doc/images/contact_actions_dropdown_menu.png" width="75%" hight="75%" />
