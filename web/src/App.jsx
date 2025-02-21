@@ -4,8 +4,10 @@ import Contacts from './components/Contacts';
 import Footer from './components/Footer';
 import { useEffect, useState } from 'react';
 import ContactForm from './components/ContactForm';
-import SaveResultAlert from './components/SaveResultAlert';
+import ActionResultAlert from './components/ActionResultAlert';
 import ContactServive from './services/ContactServive';
+import { ActionResultType, ContactAction } from './constants';
+import { removeContactFromList } from './util';
 
 function App() {
     
@@ -24,26 +26,40 @@ function App() {
 
     return (
         <>
-            <Header handleAddContact={() => setShowAddContactForm(true)} loadingSavedContacts={loadingSavedContacts} />
+            <Header handleAddContact = {() => setShowAddContactForm(true)} loadingSavedContacts={loadingSavedContacts} />
             
-            <SaveResultAlert onClose={() => setSaveResultAlert({show: false})} {...saveResultAlert}/>
+            <ActionResultAlert onClose = {() => setSaveResultAlert({show: false})} {...saveResultAlert}/>
 
             <ContactForm 
                 show={showAddContactForm} 
-                handleClose={() => setShowAddContactForm(false)}
-                onSaveSuccess={(savedContact) => {
+                handleClose = {() => setShowAddContactForm(false)}
+                onSaveSuccess = {(savedContact) => {
                     setContacts([...contacts, savedContact]);
                     setShowAddContactForm(false);
-                    setSaveResultAlert({...savedContact, show: true, resultType: 'success'});
+                    setSaveResultAlert({...savedContact, show: true, resultType: ActionResultType.SUCCESS_ADD});
                 }}
-                onSaveFail={() => {
+                onSaveFail= {() => {
                     setShowAddContactForm(false);
-                    setSaveResultAlert({show: true, resultType: 'fail'});
+                    setSaveResultAlert({show: true, resultType: ActionResultType.FAIL});
                 }}
             />
-
-            <Contacts contacts={contacts} loadingSavedContacts={loadingSavedContacts} />
-            
+            <div className='contacts-wrapper'>
+                <div className='contacts-content'>
+                    <Contacts 
+                        contacts={contacts} 
+                        loadingSavedContacts={loadingSavedContacts}
+                        onActionSuccess = {(actionType, contact) => {
+                            if(actionType === ContactAction.DELETE) {
+                                setSaveResultAlert({...contact, show: true, resultType: ActionResultType.SUCCESS_DELETE});
+                                setContacts(removeContactFromList([...contacts], contact));
+                            }
+                        }}
+                        onActionFail = {() => {
+                            setSaveResultAlert({show: true, resultType: ActionResultType.FAIL});
+                        }}
+                    />
+                </div>
+            </div>
             <Footer />            
         </>
     )
