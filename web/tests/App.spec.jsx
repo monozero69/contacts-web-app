@@ -1,9 +1,13 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import App from "../src/App";
-import { renderAndSetupUser, TEST_RUBY_MAY_CONTACT } from "./test-helper";
+import { renderAndSetupUser, TEST_JACK_TAM_CONTACT, TEST_RUBY_MAY_CONTACT } from "./test-helper";
 import { server } from "./mocks/server";
 import { http, HttpResponse } from "msw";
 import { EMPTY_CONTACT, HttpStatus, REST_API_ENDPOINT } from "../src/constants";
+
+const JACK_TAM_CONTACT_ACTIONS_BUTTON = 0;
+const BEN_RASHFORD_CONTACT_ACTIONS_BUTTON = 1;
+const KATE_LONGHORN_CONTACT_ACTIONS_BUTTON = 2;
 
 describe('App', () => {
     test('should render',  async () => {
@@ -181,7 +185,7 @@ describe('App remove contact functionality', () => {
         const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
         expect(contactActionsButtons.length).toBe(3);
 
-        await user.click(contactActionsButtons[1]);
+        await user.click(contactActionsButtons[BEN_RASHFORD_CONTACT_ACTIONS_BUTTON]);
 
         const deleteContactAction = await screen.findByText('Remove');
         expect(deleteContactAction).toBeVisible();
@@ -204,7 +208,7 @@ describe('App remove contact functionality', () => {
         const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
         expect(contactActionsButtons.length).toBe(3);
 
-        await user.click(contactActionsButtons[2]); // try to delete Kate Longhorn contact
+        await user.click(contactActionsButtons[KATE_LONGHORN_CONTACT_ACTIONS_BUTTON]); // try to delete Kate Longhorn contact
 
         const deleteContactAction = await screen.findByText('Remove');
         expect(deleteContactAction).toBeVisible();
@@ -225,6 +229,84 @@ describe.skip('App edit contact functionality', () => {
 
 });
 
-describe.skip('App contact more info functionality', () => {
+describe('App contact more info functionality', () => {
+    test('should show all contact details for selected contact', async () => {
+        // arrange
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findByRole('table');
+
+        // act
+        const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        await user.click(contactActionsButtons[JACK_TAM_CONTACT_ACTIONS_BUTTON]);
+        const moreInfoContactAction = await screen.findByText('More info');
+        expect(moreInfoContactAction).toBeVisible();
+        await user.click(moreInfoContactAction);
+        const dialog = await screen.findByRole('dialog');
+        await user.click(screen.getByRole('button', {name: 'Show Address'}));
+        await screen.findByRole('textbox', {name: 'Address line 1'});
+
+        // assert
+        expect(within(dialog).getByText(/More info/i)).toBeInTheDocument();
+        expect(screen.getByRole('textbox', {name: 'First Name'})).toHaveValue(TEST_JACK_TAM_CONTACT.firstname);
+        expect(screen.getByRole('textbox', {name: 'Last Name'})).toHaveValue(TEST_JACK_TAM_CONTACT.lastname);
+        expect(screen.getByRole('textbox', {name: 'Phone number'})).toHaveValue(TEST_JACK_TAM_CONTACT.phonenumber);
+        expect(screen.getByRole('textbox', {name: 'Email address'})).toHaveValue(TEST_JACK_TAM_CONTACT.email);
+        expect(screen.getByRole('textbox', {name: 'Address line 1'})).toHaveValue(TEST_JACK_TAM_CONTACT.firstLineOfAddress);
+        expect(screen.getByRole('textbox', {name: 'Address line 2'})).toHaveValue(TEST_JACK_TAM_CONTACT.secondLineOfAddress);
+        expect(screen.getByRole('textbox', {name: 'Address line 3'})).toHaveValue(TEST_JACK_TAM_CONTACT.thirdLineOfAddress);
+        expect(screen.getByRole('textbox', {name: 'City'})).toHaveValue(TEST_JACK_TAM_CONTACT.city);
+        expect(screen.getByRole('textbox', {name: 'County'})).toHaveValue(TEST_JACK_TAM_CONTACT.county);
+        expect(screen.getByRole('textbox', {name: 'Postcode'})).toHaveValue(TEST_JACK_TAM_CONTACT.postcode);
+        expect(screen.getByRole('combobox', {name: 'Country'})).toHaveValue(TEST_JACK_TAM_CONTACT.country);
+    });
+
+    test('should show contact details for selected contact but not allow the user to change it', async () => {
+        // arrange
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findByRole('table');
+
+        // act
+        const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        await user.click(contactActionsButtons[JACK_TAM_CONTACT_ACTIONS_BUTTON]);
+        const moreInfoContactAction = await screen.findByText('More info');
+        expect(moreInfoContactAction).toBeVisible();
+        await user.click(moreInfoContactAction);
+        const dialog = await screen.findByRole('dialog');
+        await user.click(screen.getByRole('button', {name: 'Show Address'}));
+        await screen.findByRole('textbox', {name: 'Address line 1'});
+
+        // assert
+        expect(within(dialog).getByText(/More info/i)).toBeInTheDocument();
+        expect(screen.getByRole('textbox', {name: 'First Name'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Last Name'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Phone number'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Email address'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Address line 1'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Address line 2'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Address line 3'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'City'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'County'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Postcode'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('combobox', {name: 'Country'})).toHaveAttribute('disabled');
+    });
+
+    test('should allow the user to close the form when they have it open', async () => {
+        // arrange
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findByRole('table');
+
+        // act
+        const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        await user.click(contactActionsButtons[JACK_TAM_CONTACT_ACTIONS_BUTTON]);
+        const moreInfoContactAction = await screen.findByText('More info');
+        expect(moreInfoContactAction).toBeVisible();
+        await user.click(moreInfoContactAction);
+        await screen.findByRole('dialog');
+        await user.click(within(screen.getByTestId('contact-form-main-btns')).getByRole('button', {name: 'Close'}));
+        await screen.findByRole('table');
+
+        // assert
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
 
 });

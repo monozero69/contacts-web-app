@@ -29,13 +29,13 @@ const TEST_JACK_TAM_CONTACT = Object.freeze({
                                     lastname:"Tam",
                                     phonenumber:"01274224466",
                                     email:"jack.tam@test.com",
-                                    firstLineOfAddress:"",
-                                    secondLineOfAddress:"",
-                                    thirdLineOfAddress:"",
-                                    city:"",
-                                    county:"",
-                                    postcode:"",
-                                    country:""
+                                    firstLineOfAddress:"78 Rovers Road",
+                                    secondLineOfAddress:"secondLineOfAddress",
+                                    thirdLineOfAddress:"thirdLineOfAddress",
+                                    city:"Perth",
+                                    county:"Perthshire",
+                                    postcode:"PH1 2RT",
+                                    country:"Scotland"
                                 });
 
 const TEST_BEN_RASHFORD_CONTACT = Object.freeze({

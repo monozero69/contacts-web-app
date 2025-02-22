@@ -7,8 +7,9 @@ import PropTypes from 'prop-types';
 import Spinner from 'react-bootstrap/Spinner';
 import DeleteActionProgress from './DeleteActionProgress';
 import { useState } from 'react';
-import { ContactAction } from '../constants';
+import { ContactAction, ContactFormType, EMPTY_CONTACT } from '../constants';
 import ContactServive from '../services/ContactServive';
+import ContactForm from './ContactForm';
 
 const TableHeadings = () => {
     return (
@@ -28,6 +29,11 @@ const TableHeadings = () => {
 const TableBody = ({contacts, onActionSuccess, onActionFail}) => {
 
     const [showDeleteActionProgress, setShowDeleteActionProgress] = useState(false);
+    const [contactForm, setContactForm] = useState({
+                                                activeContact: EMPTY_CONTACT,
+                                                show: false,
+                                                contactFormType: ContactFormType.VIEW,
+                                            });
 
     const handleAction = (actionType, contact) => {
         if(actionType === ContactAction.DELETE) {
@@ -37,6 +43,12 @@ const TableBody = ({contacts, onActionSuccess, onActionFail}) => {
                 result ? onActionSuccess(actionType, contact) : onActionFail(actionType, contact);
                 setShowDeleteActionProgress(false);
             })();
+        } else if(actionType === ContactAction.VIEW_MORE_INFO) {
+            setContactForm({
+                activeContact: {...contact},
+                contactFormType: ContactFormType.VIEW,
+                show: true,
+            });
         }
     };
 
@@ -63,6 +75,15 @@ const TableBody = ({contacts, onActionSuccess, onActionFail}) => {
                 }))
             }
             <DeleteActionProgress show={showDeleteActionProgress} />
+            {
+                contactForm.show ? 
+                <ContactForm
+                    contact={contactForm.activeContact}
+                    contactFormType={contactForm.contactFormType} 
+                    show={contactForm.show} 
+                    handleClose = {() => setContactForm({...contactForm, show: false})}
+                /> : ''
+            }
         </tbody>
     );
 };
