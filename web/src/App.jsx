@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import ContactForm from './components/ContactForm';
 import ActionResultAlert from './components/ActionResultAlert';
 import ContactServive from './services/ContactServive';
-import { ActionResultType, ContactAction } from './constants';
+import { ActionResultType, ContactAction, ContactFormType, EMPTY_CONTACT } from './constants';
 import { removeContactFromList } from './util';
 
 function App() {
@@ -26,11 +26,13 @@ function App() {
 
     return (
         <>
-            <Header handleAddContact = {() => setShowAddContactForm(true)} loadingSavedContacts={loadingSavedContacts} />
+            <Header handleAddContact={() => setShowAddContactForm(true)} loadingSavedContacts={loadingSavedContacts} />
             
-            <ActionResultAlert onClose = {() => setSaveResultAlert({show: false})} {...saveResultAlert}/>
+            <ActionResultAlert onClose={() => setSaveResultAlert({show: false})} {...saveResultAlert}/>
 
-            <ContactForm 
+            <ContactForm
+                contact={EMPTY_CONTACT}
+                contactFormType={ContactFormType.ADD} 
                 show={showAddContactForm} 
                 handleClose = {() => setShowAddContactForm(false)}
                 onSaveSuccess = {(savedContact) => {
@@ -48,13 +50,13 @@ function App() {
                     <Contacts 
                         contacts={contacts} 
                         loadingSavedContacts={loadingSavedContacts}
-                        onActionSuccess = {(actionType, contact) => {
+                        onActionSuccess={(actionType, contact) => {
                             if(actionType === ContactAction.DELETE) {
                                 setSaveResultAlert({...contact, show: true, resultType: ActionResultType.SUCCESS_DELETE});
                                 setContacts(removeContactFromList([...contacts], contact));
                             }
                         }}
-                        onActionFail = {() => {
+                        onActionFail={() => {
                             setSaveResultAlert({show: true, resultType: ActionResultType.FAIL});
                         }}
                     />
