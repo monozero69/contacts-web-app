@@ -220,7 +220,7 @@ Also we will need the following services that are not from Amazon:
 
 ### High-level instructions on deploying the application to production
 When giving high-level instructions on deploying the application to production I'm following the simple principles: 
-- not to lock my clients into AWS and allow them to move another cloud provider easily if required
+- not to lock my clients into AWS and allow them to move to an another cloud provider easily if required
 - automate the process of provisioning cloud infrastructure therefore `HashiCorp Terraform` will be used to define infrastructure as code (IaC) using a simple, declarative language. It supports multiple cloud providers, making it a good choice for multi-cloud environments.
 - configuration of the cloud infrastructure will be done using `Ansible` an open source automation tool, it's known for its simplicity and ease of use. Ansible use YAML for configuration files, making it easy to read and write.
 
@@ -237,7 +237,7 @@ Now we need to turn our attention to automatically deploying the API and fronten
 - As changes to this Repo `main` branch go via pull requests, which has [CI](https://github.com/monozero69/contacts-web-app/actions/workflows/ci.yml) run against them ensuring that the pull request builds and all tests pass.
 - Our GitHub Action CI workflow will build docker images based on changes in the `main` branch and publish them for API and frontend into `Docker Hub Registry`
 - We will update the `Helm charts` in our Infrastructure as Code (IaC) GitHub Repo with new API and Frontend docker images versions via `Pull Request` created by the CI Bot.
-- Once our `Helm charts` images version changes PR are approved by `Humans` then GitHub Actions CD pipeline will deploy the new images into `Kubernetes cluster`
+- Once our `Helm charts` Docker images version changes PR are approved by `Humans` then GitHub Actions CD pipeline will deploy the new images into `Kubernetes cluster`
 
 Helm charts are used to define, install, and manage Kubernetes applications. They provide a way to package Kubernetes resources into single, reusable unit called a "chart". 
 
