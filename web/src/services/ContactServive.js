@@ -14,7 +14,7 @@ const addContact = async (newContact) => {
         savedContact = await response.json();
     }
 
-    return savedContact;
+    return {savedContact, ok: response.status === HttpStatus.CREATED};
 };
 
 const getAllContacts = async () => {
@@ -43,8 +43,27 @@ const removeContact = async (contactId) => {
     return response.status === HttpStatus.OK;
 };
 
+const updateContact = async (existingContact) => {
+    const response = await fetch(REST_API_ENDPOINT, {
+        method:'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(existingContact),
+    });
+    
+    let savedContact = {};
+    if(response.status === HttpStatus.OK) {
+        savedContact = await response.json();
+    }
+
+    return {savedContact, ok: response.status === HttpStatus.OK};
+};
+
+
 export default {
     addContact,
     getAllContacts,
     removeContact,
+    updateContact,
 };

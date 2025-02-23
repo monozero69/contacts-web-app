@@ -1,5 +1,6 @@
 import { http, HttpResponse } from 'msw';
 import { HttpStatus, REST_API_ENDPOINT } from '../../src/constants';
+import { TEST_BEN_RASHFORD_CONTACT, TEST_JACK_TAM_CONTACT, TEST_KATE_LONGHORN_CONTACT } from '../test-helper';
 
 export const handlers = [
     http.post(REST_API_ENDPOINT, async ({ request }) => {
@@ -14,15 +15,11 @@ export const handlers = [
         );
     }),
     http.get(REST_API_ENDPOINT, async () => {
-        return HttpResponse.json([
-                {id: 200, firstname: 'Jack', lastname: 'Tam', phonenumber: '01274224466', email: 'jack.tam@test.com'},
-                {id: 201, firstname: 'Ben', lastname: 'Rashford', phonenumber: '01274335466', email: 'ben@test.com'},
-                {id: 203, firstname: 'Kate', lastname: 'Longhorn', phonenumber: '01274664466', email: 'klonghorn@test.com'},
-            ], 
-            { 
-                status: HttpStatus.OK,
-            }
-        );
+        return HttpResponse.json([TEST_JACK_TAM_CONTACT, TEST_BEN_RASHFORD_CONTACT, TEST_KATE_LONGHORN_CONTACT,], { status: HttpStatus.OK, });
     }),
     http.delete(REST_API_ENDPOINT.concat('/', 201), () => new HttpResponse(null, { status: HttpStatus.OK })),
+    http.put(REST_API_ENDPOINT, async ({ request }) => {
+        const existingContact = await request.json();
+        return HttpResponse.json({ ...existingContact, }, { status: HttpStatus.OK, });
+    }),
 ];

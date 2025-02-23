@@ -1,9 +1,13 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import App from "../src/App";
-import { renderAndSetupUser } from "./test-helper";
+import { renderAndSetupUser, TEST_JACK_TAM_CONTACT, TEST_RUBY_MAY_CONTACT } from "./test-helper";
 import { server } from "./mocks/server";
 import { http, HttpResponse } from "msw";
-import { HttpStatus, REST_API_ENDPOINT } from "../src/constants";
+import { EMPTY_CONTACT, HttpStatus, REST_API_ENDPOINT } from "../src/constants";
+
+const JACK_TAM_CONTACT_ACTIONS_BUTTON = 0;
+const BEN_RASHFORD_CONTACT_ACTIONS_BUTTON = 1;
+const KATE_LONGHORN_CONTACT_ACTIONS_BUTTON = 2;
 
 describe('App', () => {
     test('should render',  async () => {
@@ -16,40 +20,7 @@ describe('App', () => {
         expect(screen.getByRole('button', { name: /Add Contact/i })).toBeInTheDocument();
     });
 
-    test('should show a success alert when the user successful adds a new contact', async () => {
-        const { user } = renderAndSetupUser(<App />);
-
-        await screen.findAllByRole('button', { name: /Add Contact/i });
-
-        await user.click(screen.getByRole('button', { name: /Add Contact/i }));
-        await user.type(screen.getByRole('textbox', {name: 'First Name'}), 'Ruby');
-        await user.type(screen.getByRole('textbox', {name: 'Last Name'}), 'May');
-        await user.type(screen.getByRole('textbox', {name: 'Phone number'}), '01274336699');
-        await user.click(screen.getByRole('button', {name: 'Save'}));
-
-        await screen.findByRole('alert');
-
-        expect(screen.getByRole('alert')).toHaveTextContent('Saved Ruby May contact details.');
-    });
-
-    test('should show a error alert when the user can not save a new contact', async () => {
-        server.use(http.post(REST_API_ENDPOINT, () => new HttpResponse(null, { status: HttpStatus.INTERNAL_SERVER_ERROR })));
-        const { user } = renderAndSetupUser(<App />);
-
-        await screen.findAllByRole('button', { name: /Add Contact/i });
-
-        await user.click(screen.getByRole('button', { name: /Add Contact/i }));
-        await user.type(screen.getByRole('textbox', {name: 'First Name'}), 'Ruby');
-        await user.type(screen.getByRole('textbox', {name: 'Last Name'}), 'May');
-        await user.type(screen.getByRole('textbox', {name: 'Phone number'}), '01274336699');
-        await user.click(screen.getByRole('button', {name: 'Save'}));
-
-        await screen.findAllByRole('alert');
-
-        expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
-    });
-
-    test('should allow the user to close the save result alert', async () => {
+    test('should allow the user to close the action result alert', async () => {
         server.use(http.post(REST_API_ENDPOINT, () => new HttpResponse(null, { status: HttpStatus.INTERNAL_SERVER_ERROR })));
         const { user } = renderAndSetupUser(<App />);
 
@@ -64,6 +35,41 @@ describe('App', () => {
 
         expect(screen.queryByText(/Something went wrong/i)).not.toBeInTheDocument();
     });
+});
+
+describe('App add contact functionality', () => {
+    test('should show a success alert when the user successful adds a new contact', async () => {
+        const { user } = renderAndSetupUser(<App />);
+
+        await screen.findAllByRole('button', { name: /Add Contact/i });
+
+        await user.click(screen.getByRole('button', { name: /Add Contact/i }));
+        await user.type(screen.getByRole('textbox', {name: 'First Name'}), TEST_RUBY_MAY_CONTACT.firstname);
+        await user.type(screen.getByRole('textbox', {name: 'Last Name'}), TEST_RUBY_MAY_CONTACT.lastname);
+        await user.type(screen.getByRole('textbox', {name: 'Phone number'}), TEST_RUBY_MAY_CONTACT.phonenumber);
+        await user.click(screen.getByRole('button', {name: 'Save'}));
+
+        await screen.findByRole('alert');
+
+        expect(screen.getByRole('alert')).toHaveTextContent('Saved Ruby May contact details.');
+    });
+
+    test('should show a error alert when the user can not save a new contact', async () => {
+        server.use(http.post(REST_API_ENDPOINT, () => new HttpResponse(null, { status: HttpStatus.INTERNAL_SERVER_ERROR })));
+        const { user } = renderAndSetupUser(<App />);
+
+        await screen.findAllByRole('button', { name: /Add Contact/i });
+
+        await user.click(screen.getByRole('button', { name: /Add Contact/i }));
+        await user.type(screen.getByRole('textbox', {name: 'First Name'}), TEST_RUBY_MAY_CONTACT.firstname);
+        await user.type(screen.getByRole('textbox', {name: 'Last Name'}), TEST_RUBY_MAY_CONTACT.lastname);
+        await user.type(screen.getByRole('textbox', {name: 'Phone number'}), TEST_RUBY_MAY_CONTACT.phonenumber);
+        await user.click(screen.getByRole('button', {name: 'Save'}));
+
+        await screen.findAllByRole('alert');
+
+        expect(screen.getByText(/Something went wrong/i)).toBeInTheDocument();
+    });
 
     test('should display a new contact in the Contacts table when the user successful adds a new contact', async () => {
         const { user } = renderAndSetupUser(<App />);
@@ -71,19 +77,19 @@ describe('App', () => {
         await screen.findAllByRole('button', { name: /Add Contact/i });
 
         await user.click(screen.getByRole('button', { name: /Add Contact/i }));
-        await user.type(screen.getByRole('textbox', {name: 'First Name'}), 'Ruby');
-        await user.type(screen.getByRole('textbox', {name: 'Last Name'}), 'June');
-        await user.type(screen.getByRole('textbox', {name: 'Phone number'}), '01274224461');
-        await user.type(screen.getByRole('textbox', {name: 'Email address'}), 'rubyjune@test.com');
+        await user.type(screen.getByRole('textbox', {name: 'First Name'}), TEST_RUBY_MAY_CONTACT.firstname);
+        await user.type(screen.getByRole('textbox', {name: 'Last Name'}), TEST_RUBY_MAY_CONTACT.lastname);
+        await user.type(screen.getByRole('textbox', {name: 'Phone number'}), TEST_RUBY_MAY_CONTACT.phonenumber);
+        await user.type(screen.getByRole('textbox', {name: 'Email address'}), TEST_RUBY_MAY_CONTACT.email);
         await user.click(screen.getByRole('button', {name: 'Save'}));
 
         await screen.findByRole('table');
 
         expect(screen.getByRole('cell', {name: '301'})).toBeInTheDocument();
-        expect(screen.getByRole('cell', {name: 'Ruby'})).toBeInTheDocument();
-        expect(screen.getByRole('cell', {name: 'June'})).toBeInTheDocument();
-        expect(screen.getByRole('cell', {name: '01274224461'})).toBeInTheDocument();
-        expect(screen.getByRole('cell', {name: 'rubyjune@test.com'})).toBeInTheDocument();
+        expect(screen.getByRole('cell', {name: TEST_RUBY_MAY_CONTACT.firstname})).toBeInTheDocument();
+        expect(screen.getByRole('cell', {name: TEST_RUBY_MAY_CONTACT.lastname})).toBeInTheDocument();
+        expect(screen.getByRole('cell', {name: TEST_RUBY_MAY_CONTACT.phonenumber})).toBeInTheDocument();
+        expect(screen.getByRole('cell', {name: TEST_RUBY_MAY_CONTACT.email})).toBeInTheDocument();
     });
 
     test('should allow the user to cancel adding a new contact', async () => {
@@ -103,6 +109,53 @@ describe('App', () => {
         expect(screen.queryByText('Saved Nobody LikesMe contact details.')).not.toBeInTheDocument();
     });
 
+    test('should always start with empty values in the Add Contact form and never the previous saved contact values', async () => {
+        // arrange
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findAllByRole('button', { name: /Add Contact/i });
+        await user.click(screen.getByRole('button', { name: /Add Contact/i }));
+        await user.type(screen.getByRole('textbox', {name: 'First Name'}), TEST_RUBY_MAY_CONTACT.firstname);
+        await user.type(screen.getByRole('textbox', {name: 'Last Name'}), TEST_RUBY_MAY_CONTACT.lastname);
+        await user.type(screen.getByRole('textbox', {name: 'Phone number'}), TEST_RUBY_MAY_CONTACT.phonenumber);
+        await user.click(screen.getByRole('button', {name: 'Save'}));
+        await screen.findByRole('alert');
+        expect(screen.getByRole('alert')).toHaveTextContent('Saved Ruby May contact details.');
+
+        // act
+        await user.click(screen.getByRole('button', { name: /Add Contact/i }));
+        await screen.findByRole('textbox', {name: 'First Name'});
+
+        // assert
+        expect(screen.getByRole('textbox', {name: 'First Name'})).toHaveValue(EMPTY_CONTACT.firstname);
+        expect(screen.getByRole('textbox', {name: 'Last Name'})).toHaveValue(EMPTY_CONTACT.lastname);
+        expect(screen.getByRole('textbox', {name: 'Phone number'})).toHaveValue(EMPTY_CONTACT.phonenumber);
+        expect(screen.getByRole('textbox', {name: 'Email address'})).toHaveValue(EMPTY_CONTACT.email);
+    });
+
+    test('should always start with empty values in the Add Contact form and never the previous canceled form entered values', async () => {
+        // arrange
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findAllByRole('button', { name: /Add Contact/i });
+        await user.click(screen.getByRole('button', { name: /Add Contact/i }));
+        await user.type(screen.getByRole('textbox', {name: 'First Name'}), TEST_RUBY_MAY_CONTACT.firstname);
+        await user.type(screen.getByRole('textbox', {name: 'Last Name'}), TEST_RUBY_MAY_CONTACT.lastname);
+        await user.type(screen.getByRole('textbox', {name: 'Phone number'}), TEST_RUBY_MAY_CONTACT.phonenumber);
+        await user.click(screen.getByRole('button', {name: 'Cancel'}));
+        await screen.findByRole('table');
+
+        // act
+        await user.click(screen.getByRole('button', { name: /Add Contact/i }));
+        await screen.findByRole('textbox', {name: 'First Name'});
+
+        // assert
+        expect(screen.getByRole('textbox', {name: 'First Name'})).toHaveValue(EMPTY_CONTACT.firstname);
+        expect(screen.getByRole('textbox', {name: 'Last Name'})).toHaveValue(EMPTY_CONTACT.lastname);
+        expect(screen.getByRole('textbox', {name: 'Phone number'})).toHaveValue(EMPTY_CONTACT.phonenumber);
+        expect(screen.getByRole('textbox', {name: 'Email address'})).toHaveValue(EMPTY_CONTACT.email);
+    });
+});
+
+describe('App load contacts functionality', () => {
     test('should show all contacts saved', async () => {
         render(<App />);
 
@@ -121,7 +174,9 @@ describe('App', () => {
 
         expect(screen.getByText(/No saved contacts/i)).toBeInTheDocument();
     });
-    
+});
+
+describe('App remove contact functionality', () => {
     test('should allow the user to delete a contact', async () => {
         const { user } = renderAndSetupUser(<App />);
 
@@ -130,7 +185,7 @@ describe('App', () => {
         const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
         expect(contactActionsButtons.length).toBe(3);
 
-        await user.click(contactActionsButtons[1]);
+        await user.click(contactActionsButtons[BEN_RASHFORD_CONTACT_ACTIONS_BUTTON]);
 
         const deleteContactAction = await screen.findByText('Remove');
         expect(deleteContactAction).toBeVisible();
@@ -153,7 +208,7 @@ describe('App', () => {
         const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
         expect(contactActionsButtons.length).toBe(3);
 
-        await user.click(contactActionsButtons[2]); // try to delete Kate Longhorn contact
+        await user.click(contactActionsButtons[KATE_LONGHORN_CONTACT_ACTIONS_BUTTON]); // try to delete Kate Longhorn contact
 
         const deleteContactAction = await screen.findByText('Remove');
         expect(deleteContactAction).toBeVisible();
@@ -168,4 +223,226 @@ describe('App', () => {
         expect(screen.getByRole('row', {name: '203 Kate Longhorn 01274664466 klonghorn@test.com ...'})).toBeInTheDocument();
         expect(screen.getAllByRole('button', {name: '...'}).length).toBe(3);
     });
+});
+
+describe('App edit contact functionality', () => {
+    test('should show all contact details for selected contact', async () => {
+        // arrange
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findByRole('table');
+
+        // act
+        const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        await user.click(contactActionsButtons[JACK_TAM_CONTACT_ACTIONS_BUTTON]);
+        const editContactAction = await screen.findByText('Edit');
+        expect(editContactAction).toBeVisible();
+        await user.click(editContactAction);
+        const dialog = await screen.findByRole('dialog');
+        await user.click(screen.getByRole('button', {name: 'Show Address'}));
+        await screen.findByRole('textbox', {name: 'Address line 1'});
+
+        // assert
+        expect(within(dialog).getByText(/Edit Contact/i)).toBeInTheDocument();
+        expect(screen.getByRole('textbox', {name: 'First Name'})).toHaveValue(TEST_JACK_TAM_CONTACT.firstname);
+        expect(screen.getByRole('textbox', {name: 'Last Name'})).toHaveValue(TEST_JACK_TAM_CONTACT.lastname);
+        expect(screen.getByRole('textbox', {name: 'Phone number'})).toHaveValue(TEST_JACK_TAM_CONTACT.phonenumber);
+        expect(screen.getByRole('textbox', {name: 'Email address'})).toHaveValue(TEST_JACK_TAM_CONTACT.email);
+        expect(screen.getByRole('textbox', {name: 'Address line 1'})).toHaveValue(TEST_JACK_TAM_CONTACT.firstLineOfAddress);
+        expect(screen.getByRole('textbox', {name: 'Address line 2'})).toHaveValue(TEST_JACK_TAM_CONTACT.secondLineOfAddress);
+        expect(screen.getByRole('textbox', {name: 'Address line 3'})).toHaveValue(TEST_JACK_TAM_CONTACT.thirdLineOfAddress);
+        expect(screen.getByRole('textbox', {name: 'City'})).toHaveValue(TEST_JACK_TAM_CONTACT.city);
+        expect(screen.getByRole('textbox', {name: 'County'})).toHaveValue(TEST_JACK_TAM_CONTACT.county);
+        expect(screen.getByRole('textbox', {name: 'Postcode'})).toHaveValue(TEST_JACK_TAM_CONTACT.postcode);
+        expect(screen.getByRole('combobox', {name: 'Country'})).toHaveValue(TEST_JACK_TAM_CONTACT.country);
+    });
+
+    test('should allow the user to edit an existing contact', async () => {
+        // arrange
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findByRole('table');
+
+        // act
+        const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        await user.click(contactActionsButtons[KATE_LONGHORN_CONTACT_ACTIONS_BUTTON]);
+        const editContactAction = await screen.findByText('Edit');
+        expect(editContactAction).toBeVisible();
+        await user.click(editContactAction);
+        await screen.findByRole('dialog');
+        await user.clear(screen.getByRole('textbox', {name: 'Last Name'}));
+        await user.clear(screen.getByRole('textbox', {name: 'Phone number'}));
+        await user.clear(screen.getByRole('textbox', {name: 'Email address'}));
+        await user.type(screen.getByRole('textbox', {name: 'Last Name'}), 'LastNameChanged');
+        await user.type(screen.getByRole('textbox', {name: 'Phone number'}), '00700700700');
+        await user.type(screen.getByRole('textbox', {name: 'Email address'}), 'changedemail@test.com');
+        await user.click(screen.getByRole('button', {name: 'Save'}));
+        await screen.findByRole('table');
+
+        // assert
+        expect(screen.getByRole('alert')).toHaveTextContent('Updated Kate LastNameChanged contact details.');     
+        expect(screen.getByRole('row', {name: '203 Kate LastNameChanged 00700700700 changedemail@test.com ...'})).toBeInTheDocument();
+    });
+
+    test('should allow the user to edit an existing contact address', async () => {
+        // arrange
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findByRole('table');
+
+        // act
+        let contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        await user.click(contactActionsButtons[KATE_LONGHORN_CONTACT_ACTIONS_BUTTON]);
+        await user.click(await screen.findByText('Edit'));
+        await screen.findByRole('dialog');
+        await user.click(screen.getByRole('button', {name: 'Show Address'}));
+        await screen.findByRole('textbox', {name: 'Address line 1'});
+        const changedTextPrefix = 'Changed';
+        for (const name of ['Address line 1', 'Address line 2', 'Address line 3', 'City', 'County', 'Postcode']) {
+            await user.clear(screen.getByRole('textbox', {name}));
+            await user.type(screen.getByRole('textbox', {name}), changedTextPrefix.concat(' ', name));
+        }
+        await user.click(screen.getByRole('button', {name: 'Save'}));
+        await screen.findByRole('table');
+        contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        await user.click(contactActionsButtons[KATE_LONGHORN_CONTACT_ACTIONS_BUTTON]);
+        await user.click(await screen.findByText('More info'));
+        await screen.findByRole('dialog');
+        await user.click(screen.getByRole('button', {name: 'Show Address'}));
+        await screen.findByRole('textbox', {name: 'Address line 1'});
+
+        // assert
+        expect(screen.getByRole('textbox', {name: 'Address line 1'})).toHaveValue(changedTextPrefix.concat(' Address line 1'));
+        expect(screen.getByRole('textbox', {name: 'Address line 2'})).toHaveValue(changedTextPrefix.concat(' Address line 2'));
+        expect(screen.getByRole('textbox', {name: 'Address line 3'})).toHaveValue(changedTextPrefix.concat(' Address line 3'));
+        expect(screen.getByRole('textbox', {name: 'City'})).toHaveValue(changedTextPrefix.concat(' City'));
+        expect(screen.getByRole('textbox', {name: 'County'})).toHaveValue(changedTextPrefix.concat(' County'));
+        expect(screen.getByRole('textbox', {name: 'Postcode'})).toHaveValue(changedTextPrefix.concat(' Postcode'));
+    });
+
+    test('should allow the user to cancel editing an existing contact', async () => {
+        // arrange
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findByRole('table');
+
+        // act
+        const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        await user.click(contactActionsButtons[KATE_LONGHORN_CONTACT_ACTIONS_BUTTON]);
+        const editContactAction = await screen.findByText('Edit');
+        expect(editContactAction).toBeVisible();
+        await user.click(editContactAction);
+        await screen.findByRole('dialog');
+        await user.type(screen.getByRole('textbox', {name: 'Last Name'}), 'LastNameChanged');
+        await user.type(screen.getByRole('textbox', {name: 'Phone number'}), '00700700700');
+        await user.type(screen.getByRole('textbox', {name: 'Email address'}), 'changedemail@test.com');
+        await user.click(screen.getByRole('button', {name: 'Cancel'}));
+        await screen.findByRole('table');
+
+        // assert
+        expect(screen.getByRole('row', {name: '203 Kate Longhorn 01274664466 klonghorn@test.com ...'})).toBeInTheDocument();
+    });
+
+    test('should not update an existing contact in the UI when the API does not respond with HTTP Status OK', async () => {
+        // arrange
+        server.use(http.put(REST_API_ENDPOINT, () => new HttpResponse(null, { status: HttpStatus.INTERNAL_SERVER_ERROR })));
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findByRole('table');
+
+        // act
+        const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        await user.click(contactActionsButtons[KATE_LONGHORN_CONTACT_ACTIONS_BUTTON]);
+        const editContactAction = await screen.findByText('Edit');
+        expect(editContactAction).toBeVisible();
+        await user.click(editContactAction);
+        await screen.findByRole('dialog');
+        await user.type(screen.getByRole('textbox', {name: 'Last Name'}), 'LastNameChanged');
+        await user.type(screen.getByRole('textbox', {name: 'Phone number'}), '00700700700');
+        await user.type(screen.getByRole('textbox', {name: 'Email address'}), 'changedemail@test.com');
+        await user.click(screen.getByRole('button', {name: 'Save'}));
+        const alert = await screen.findByRole('alert');
+
+        // assert
+        expect(alert).toHaveTextContent(/Something went wrong/i);
+        expect(screen.getByRole('row', {name: '203 Kate Longhorn 01274664466 klonghorn@test.com ...'})).toBeInTheDocument();
+    });
+
+});
+
+describe('App contact more info functionality', () => {
+    test('should show all contact details for selected contact', async () => {
+        // arrange
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findByRole('table');
+
+        // act
+        const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        await user.click(contactActionsButtons[JACK_TAM_CONTACT_ACTIONS_BUTTON]);
+        const moreInfoContactAction = await screen.findByText('More info');
+        expect(moreInfoContactAction).toBeVisible();
+        await user.click(moreInfoContactAction);
+        const dialog = await screen.findByRole('dialog');
+        await user.click(screen.getByRole('button', {name: 'Show Address'}));
+        await screen.findByRole('textbox', {name: 'Address line 1'});
+
+        // assert
+        expect(within(dialog).getByText(/More info/i)).toBeInTheDocument();
+        expect(screen.getByRole('textbox', {name: 'First Name'})).toHaveValue(TEST_JACK_TAM_CONTACT.firstname);
+        expect(screen.getByRole('textbox', {name: 'Last Name'})).toHaveValue(TEST_JACK_TAM_CONTACT.lastname);
+        expect(screen.getByRole('textbox', {name: 'Phone number'})).toHaveValue(TEST_JACK_TAM_CONTACT.phonenumber);
+        expect(screen.getByRole('textbox', {name: 'Email address'})).toHaveValue(TEST_JACK_TAM_CONTACT.email);
+        expect(screen.getByRole('textbox', {name: 'Address line 1'})).toHaveValue(TEST_JACK_TAM_CONTACT.firstLineOfAddress);
+        expect(screen.getByRole('textbox', {name: 'Address line 2'})).toHaveValue(TEST_JACK_TAM_CONTACT.secondLineOfAddress);
+        expect(screen.getByRole('textbox', {name: 'Address line 3'})).toHaveValue(TEST_JACK_TAM_CONTACT.thirdLineOfAddress);
+        expect(screen.getByRole('textbox', {name: 'City'})).toHaveValue(TEST_JACK_TAM_CONTACT.city);
+        expect(screen.getByRole('textbox', {name: 'County'})).toHaveValue(TEST_JACK_TAM_CONTACT.county);
+        expect(screen.getByRole('textbox', {name: 'Postcode'})).toHaveValue(TEST_JACK_TAM_CONTACT.postcode);
+        expect(screen.getByRole('combobox', {name: 'Country'})).toHaveValue(TEST_JACK_TAM_CONTACT.country);
+    });
+
+    test('should show contact details for selected contact but not allow the user to change it', async () => {
+        // arrange
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findByRole('table');
+
+        // act
+        const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        await user.click(contactActionsButtons[JACK_TAM_CONTACT_ACTIONS_BUTTON]);
+        const moreInfoContactAction = await screen.findByText('More info');
+        expect(moreInfoContactAction).toBeVisible();
+        await user.click(moreInfoContactAction);
+        const dialog = await screen.findByRole('dialog');
+        await user.click(screen.getByRole('button', {name: 'Show Address'}));
+        await screen.findByRole('textbox', {name: 'Address line 1'});
+
+        // assert
+        expect(within(dialog).getByText(/More info/i)).toBeInTheDocument();
+        expect(screen.getByRole('textbox', {name: 'First Name'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Last Name'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Phone number'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Email address'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Address line 1'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Address line 2'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Address line 3'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'City'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'County'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('textbox', {name: 'Postcode'})).toHaveAttribute('readOnly');
+        expect(screen.getByRole('combobox', {name: 'Country'})).toHaveAttribute('disabled');
+    });
+
+    test('should allow the user to close the form when they have it open', async () => {
+        // arrange
+        const { user } = renderAndSetupUser(<App />);
+        await screen.findByRole('table');
+
+        // act
+        const contactActionsButtons = screen.getAllByRole('button', {name: '...'});
+        await user.click(contactActionsButtons[JACK_TAM_CONTACT_ACTIONS_BUTTON]);
+        const moreInfoContactAction = await screen.findByText('More info');
+        expect(moreInfoContactAction).toBeVisible();
+        await user.click(moreInfoContactAction);
+        await screen.findByRole('dialog');
+        await user.click(within(screen.getByTestId('contact-form-main-btns')).getByRole('button', {name: 'Close'}));
+        await screen.findByRole('table');
+
+        // assert
+        expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+    });
+
 });

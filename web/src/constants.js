@@ -19,3 +19,24 @@ export const ContactAction = Object.freeze({
     UPDATE: 'update',
     DELETE: 'delete',
 });
+
+export const ContactFormType = Object.freeze({
+    ADD: { title: 'Add Contact', iconClass: 'bi bi-person-fill-add'},
+    VIEW: { title: 'More info', iconClass: 'bi bi-info-circle'},
+    UPDATE: { title: 'Edit Contact', iconClass: 'bi bi-pencil'},
+});
+
+export const EMPTY_CONTACT = Object.freeze({
+    id:null,
+    firstname: '',
+    lastname: '',
+    phonenumber: '',
+    email: '',
+    firstLineOfAddress: '',
+    secondLineOfAddress: '',
+    thirdLineOfAddress: '',
+    city: '',
+    county: '',
+    postcode: '',
+    country: ''
+});
