@@ -180,3 +180,19 @@ To remove an existing contact for example `Ruby May` contact details then you ne
 Once the contact is removed you will see a message telling you that.
 
 <img src="./doc/images/delete_contact_action_done.png" width="75%" hight="75%" />
+
+### Editing an existing contact
+To edit an existing contact for example `Kate Longhorn` phone number then you need to first click on the **`actions`** menu then select `Edit` from it.
+
+<img src="./doc/images/edit_contact.png" width="75%" hight="75%" />
+
+Once you have edited the required contact details you can click `Save`. Once the contact is updated you will see a message telling you that. 
+
+<img src="./doc/images/updated_contacts.png" width="75%" hight="75%" />
+
+### Viewing all details for an existing contact
+To view all details for an existing contact for example `Kate Longhorn` then you need to first click on the **`actions`** menu then select `More info` from it.
+
+<img src="./doc/images/view_contact_readonly_mode.png" width="75%" hight="75%" />
+
+Note `More info` does not allow you to edit contact details.
