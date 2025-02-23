@@ -25,12 +25,12 @@ const ContactForm = ({show, handleClose, onSaveSuccess, onSaveFail, contact = EM
         e.preventDefault();
         (async () => {
             setSaveInProgress(true);
-            const savedContact = await ContactServive.addContact(contactData);
+            const saveResponse = contactFormType === ContactFormType.ADD ? await ContactServive.addContact(contactData) : await ContactServive.updateContact(contactData);
             setSaveInProgress(false);
-            if(savedContact.id) {
-                onSaveSuccess(savedContact);
+            if(saveResponse.ok) {
+                onSaveSuccess(saveResponse.savedContact);
             } else {
-                onSaveFail(savedContact);
+                onSaveFail(saveResponse.savedContact);
             }
             setContactData(EMPTY_CONTACT);
         })();

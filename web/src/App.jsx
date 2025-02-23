@@ -7,7 +7,7 @@ import ContactForm from './components/ContactForm';
 import ActionResultAlert from './components/ActionResultAlert';
 import ContactServive from './services/ContactServive';
 import { ActionResultType, ContactAction, ContactFormType, EMPTY_CONTACT } from './constants';
-import { removeContactFromList } from './util';
+import { removeContactFromList, updateContactInList } from './util';
 
 function App() {
     
@@ -54,6 +54,9 @@ function App() {
                             if(actionType === ContactAction.DELETE) {
                                 setSaveResultAlert({...contact, show: true, resultType: ActionResultType.SUCCESS_DELETE});
                                 setContacts(removeContactFromList([...contacts], contact));
+                            } else {
+                                setSaveResultAlert({...contact, show: true, resultType: ActionResultType.SUCCESS_UPDATE});
+                                setContacts(updateContactInList([...contacts], contact));
                             }
                         }}
                         onActionFail={() => {

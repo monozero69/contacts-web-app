@@ -18,4 +18,8 @@ export const handlers = [
         return HttpResponse.json([TEST_JACK_TAM_CONTACT, TEST_BEN_RASHFORD_CONTACT, TEST_KATE_LONGHORN_CONTACT,], { status: HttpStatus.OK, });
     }),
     http.delete(REST_API_ENDPOINT.concat('/', 201), () => new HttpResponse(null, { status: HttpStatus.OK })),
+    http.put(REST_API_ENDPOINT, async ({ request }) => {
+        const existingContact = await request.json();
+        return HttpResponse.json({ ...existingContact, }, { status: HttpStatus.OK, });
+    }),
 ];

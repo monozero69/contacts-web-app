@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { ContactAction, ContactFormType, EMPTY_CONTACT } from '../constants';
 import ContactServive from '../services/ContactServive';
 import ContactForm from './ContactForm';
+import { cleanContact } from '../util';
 
 const TableHeadings = () => {
     return (
@@ -45,8 +46,14 @@ const TableBody = ({contacts, onActionSuccess, onActionFail}) => {
             })();
         } else if(actionType === ContactAction.VIEW_MORE_INFO) {
             setContactForm({
-                activeContact: {...contact},
+                activeContact: cleanContact({...contact}),
                 contactFormType: ContactFormType.VIEW,
+                show: true,
+            });
+        } else {
+            setContactForm({
+                activeContact: cleanContact({...contact}),
+                contactFormType: ContactFormType.UPDATE,
                 show: true,
             });
         }
@@ -82,6 +89,14 @@ const TableBody = ({contacts, onActionSuccess, onActionFail}) => {
                     contactFormType={contactForm.contactFormType} 
                     show={contactForm.show} 
                     handleClose = {() => setContactForm({...contactForm, show: false})}
+                    onSaveSuccess={(savedContact) => {
+                        setContactForm({...contactForm, show: false});
+                        onActionSuccess(ContactAction.UPDATE, savedContact);                                    
+                    }}
+                    onSaveFail={(savedContact) => {
+                        setContactForm({...contactForm, show: false});
+                        onActionFail(ContactAction.UPDATE, savedContact);
+                    }}
                 /> : ''
             }
         </tbody>
